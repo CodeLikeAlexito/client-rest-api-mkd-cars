@@ -1,5 +1,6 @@
 package com.codelikealexito.client.client;
 
+import com.codelikealexito.client.VO.ResponseTemplateVO;
 import com.codelikealexito.client.entities.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,13 @@ public class ClientController {
     }
 
     @GetMapping("/{userName}")
-    public ResponseEntity<UserDetails> getUserById(@PathVariable String userName) {
+    public ResponseEntity<UserDetails> getClientByUsername(@PathVariable String userName) {
         return ResponseEntity.ok(clientService.loadUserByUsername(userName));
+    }
+
+    @GetMapping("/client-with-cars/{clientId}")
+    public ResponseEntity<ResponseTemplateVO> getClientWithCars(@PathVariable Long clientId) {
+        return ResponseEntity.ok(clientService.getClientWithCars(clientId));
     }
 
 }

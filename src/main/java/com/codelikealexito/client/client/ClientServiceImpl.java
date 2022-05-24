@@ -1,5 +1,7 @@
 package com.codelikealexito.client.client;
 
+import com.codelikealexito.client.VO.Car;
+import com.codelikealexito.client.VO.ResponseTemplateVO;
 import com.codelikealexito.client.entities.Client;
 import com.codelikealexito.client.entities.Role;
 import com.codelikealexito.client.enums.Roles;
@@ -10,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,10 +24,26 @@ public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RestTemplate restTemplate;
 
-    public ClientServiceImpl(ClientRepository clientRepository, PasswordEncoder passwordEncoder) {
+    public ClientServiceImpl(ClientRepository clientRepository, PasswordEncoder passwordEncoder, RestTemplate restTemplate) {
         this.clientRepository = clientRepository;
         this.passwordEncoder = passwordEncoder;
+        this.restTemplate = restTemplate;
+    }
+
+    @Override
+    public ResponseTemplateVO getClientWithCars(Long clientId) {
+        ResponseTemplateVO responseTemplateVO = new ResponseTemplateVO();
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new CustomResponseStatusException(HttpStatus.NOT_FOUND, "some err code", "some err reason"));
+
+        Car car = restTemplate.getForObject("http://localhost:4002/car/" + client.getId(), Car.class);
+
+        responseTemplateVO.setClient(client);
+        responseTemplateVO.setCar(car);
+
+        return responseTemplateVO;
     }
 
     @Override
