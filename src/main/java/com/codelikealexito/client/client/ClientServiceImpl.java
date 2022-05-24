@@ -33,12 +33,12 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public ResponseTemplateVO getClientWithCars(Long clientId) {
+    public ResponseTemplateVO getClientWithCars(String author) {
         ResponseTemplateVO responseTemplateVO = new ResponseTemplateVO();
-        Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new CustomResponseStatusException(HttpStatus.NOT_FOUND, "some err code", "some err reason"));
+        Client client = clientRepository.findByUsername(author);
+//                .orElseThrow(() -> new CustomResponseStatusException(HttpStatus.NOT_FOUND, "some err code", "some err reason"));
 
-        Car car = restTemplate.getForObject("http://localhost:4002/car/" + client.getId(), Car.class);
+        Car car = restTemplate.getForObject("http://CAR-SERVICE/car/author/" + client.getUsername(), Car.class);
 
         responseTemplateVO.setClient(client);
         responseTemplateVO.setCar(car);

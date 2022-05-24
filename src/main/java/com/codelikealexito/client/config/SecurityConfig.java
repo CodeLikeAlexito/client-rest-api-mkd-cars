@@ -2,7 +2,6 @@ package com.codelikealexito.client.config;
 
 import com.codelikealexito.client.filters.JwtRequestFilter;
 import com.codelikealexito.client.client.ClientServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -14,11 +13,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private ClientServiceImpl myClientService;
 
-    @Autowired
-    private JwtRequestFilter jwtRequestFilter;
+    private final ClientServiceImpl myClientService;
+    private final JwtRequestFilter jwtRequestFilter;
+
+    public SecurityConfig(ClientServiceImpl myClientService, JwtRequestFilter jwtRequestFilter) {
+        this.myClientService = myClientService;
+        this.jwtRequestFilter = jwtRequestFilter;
+    }
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {

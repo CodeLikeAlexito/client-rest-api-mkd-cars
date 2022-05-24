@@ -10,5 +10,5 @@ public interface ClientService extends UserDetailsService {
     Client register(ClientRegistrationDto userDto);
     Client editClient(ClientRegistrationDto userDto);
     List<Client> getAllClients();
-    ResponseTemplateVO getClientWithCars(Long clientId);
+    ResponseTemplateVO getClientWithCars(String author);
 }

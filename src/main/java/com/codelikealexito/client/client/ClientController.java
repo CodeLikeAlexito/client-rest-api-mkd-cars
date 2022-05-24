@@ -31,9 +31,9 @@ public class ClientController {
         return ResponseEntity.ok(clientService.loadUserByUsername(userName));
     }
 
-    @GetMapping("/client-with-cars/{clientId}")
-    public ResponseEntity<ResponseTemplateVO> getClientWithCars(@PathVariable Long clientId) {
-        return ResponseEntity.ok(clientService.getClientWithCars(clientId));
+    @GetMapping("/client-with-cars/{author}")
+    public ResponseEntity<ResponseTemplateVO> getClientWithCars(@PathVariable String author) {
+        return ResponseEntity.ok(clientService.getClientWithCars(author));
     }
 
 }
