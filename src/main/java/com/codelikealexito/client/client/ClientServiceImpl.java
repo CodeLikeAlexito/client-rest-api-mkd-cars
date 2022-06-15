@@ -1,7 +1,5 @@
 package com.codelikealexito.client.client;
 
-import com.codelikealexito.client.VO.Car;
-import com.codelikealexito.client.VO.ResponseTemplateVO;
 import com.codelikealexito.client.entities.Client;
 import com.codelikealexito.client.entities.Role;
 import com.codelikealexito.client.enums.Roles;
@@ -33,20 +31,6 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public ResponseTemplateVO getClientWithCars(String author) {
-        ResponseTemplateVO responseTemplateVO = new ResponseTemplateVO();
-        Client client = clientRepository.findByUsername(author);
-//                .orElseThrow(() -> new CustomResponseStatusException(HttpStatus.NOT_FOUND, "some err code", "some err reason"));
-
-        Car car = restTemplate.getForObject("http://CAR-SERVICE/car/author/" + client.getUsername(), Car.class);
-
-        responseTemplateVO.setClient(client);
-        responseTemplateVO.setCar(car);
-
-        return responseTemplateVO;
-    }
-
-    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Client client = clientRepository.findByUsername(username);
         if (client == null) {
@@ -72,6 +56,7 @@ public class ClientServiceImpl implements ClientService {
         return clientRepository.save(user);
     }
 
+    //TODO to be implemented
     @Override
     public Client editClient(ClientRegistrationDto userDto) {
         if(!clientExists(userDto.getUsername())){
@@ -89,6 +74,11 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public List<Client> getAllClients() {
         return clientRepository.findAll();
+    }
+
+    @Override
+    public Client getClientByUsername(String username) {
+        return clientRepository.findByUsername(username);
     }
 
     private boolean clientExists(String username) {

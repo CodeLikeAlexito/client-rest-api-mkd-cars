@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/client?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
-    username: root
-    password: root
+    username: alex
+    password: Sofia@1005
 
   application:
     name: CLIENT-SERVICE

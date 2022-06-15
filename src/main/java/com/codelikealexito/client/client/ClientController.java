@@ -1,7 +1,7 @@
 package com.codelikealexito.client.client;
 
-import com.codelikealexito.client.VO.ResponseTemplateVO;
 import com.codelikealexito.client.entities.Client;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/client")
+@Slf4j
 public class ClientController {
 
     @Autowired
@@ -29,11 +30,6 @@ public class ClientController {
     @GetMapping("/{userName}")
     public ResponseEntity<UserDetails> getClientByUsername(@PathVariable String userName) {
         return ResponseEntity.ok(clientService.loadUserByUsername(userName));
-    }
-
-    @GetMapping("/client-with-cars/{author}")
-    public ResponseEntity<ResponseTemplateVO> getClientWithCars(@PathVariable String author) {
-        return ResponseEntity.ok(clientService.getClientWithCars(author));
     }
 
 }
