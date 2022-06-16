@@ -6,6 +6,7 @@ import com.codelikealexito.client.enums.Roles;
 import com.codelikealexito.client.exceptions.CustomResponseStatusException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -34,9 +36,16 @@ public class ClientServiceImpl implements ClientService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Client client = clientRepository.findByUsername(username);
         if (client == null) {
+            log.error("User not found in the database.");
             throw new UsernameNotFoundException(username);
         }
-        return new org.springframework.security.core.userdetails.User(client.getUsername(), client.getPassword(), new ArrayList<>());
+        log.info("User found in the database: {}", username);
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        client.getRoles().forEach(role ->
+        {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        });
+        return new org.springframework.security.core.userdetails.User(client.getUsername(), client.getPassword(), authorities);
     }
 
     @Override
