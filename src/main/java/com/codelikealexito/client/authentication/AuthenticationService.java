@@ -16,6 +16,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 @Slf4j
 public class AuthenticationService {
@@ -44,7 +46,8 @@ public class AuthenticationService {
                 .loadUserByUsername(authenticationRequest.getUsername());
         final Client client = clientService.getClientByUsername(userDetails.getUsername());
         final String jwt = jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new AuthenticationResponse(client.getId(), client.getUsername(),jwt));
+        final Date expirationTime = jwtTokenUtil.extractExpiration(jwt);
+        return ResponseEntity.ok(new AuthenticationResponse(client.getId(), client.getUsername(),jwt, expirationTime));
     }
 
     public ResponseEntity<ValidateTokenDto> validateJwtToken(String token) {
