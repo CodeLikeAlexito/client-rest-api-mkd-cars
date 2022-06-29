@@ -25,3 +25,9 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     hostname: localhost
+
+react:
+  admin:
+    api:
+      host: http://localhost:4001
+      use-snake-case: true
