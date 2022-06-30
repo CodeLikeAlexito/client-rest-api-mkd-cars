@@ -39,8 +39,9 @@ public class Client extends DateAudit {
 
     private Collection<Role> roles;
 
-    private Client(String username, String firstName, String lastName, String email, String password,
+    private Client(Long id, String username, String firstName, String lastName, String email, String password,
                    String city, String address, String phone , Collection<Role> roles) {
+        this.id = id;
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -52,9 +53,27 @@ public class Client extends DateAudit {
         this.roles = roles;
     }
 
-    public static Client createUserWithFullInformation(String username, String firstName, String lastName, String email, String password,
+//    private Client(Long id, String username, String firstName, String lastName, String email,
+//                   String city, String address, String phone , Collection<Role> roles) {
+//        this.id = id;
+//        this.username = username;
+//        this.firstName = firstName;
+//        this.lastName = lastName;
+//        this.email = email;
+//        this.city = city;
+//        this.address = address;
+//        this.phone = phone;
+//        this.roles = roles;
+//    }
+
+    public static Client createUserWithFullInformation(Long id, String username, String firstName, String lastName, String email, String password,
                                                        String city, String address, String phone , Collection<Role> roles) {
-        return new Client(username, firstName, lastName, email, password, city, address, phone, roles);
+        return new Client(null, username, firstName, lastName, email, password, city, address, phone, roles);
+    }
+
+    public static Client updateScientist(Long id, String username, String firstName, String lastName, String email, String password,
+                                                       String city, String address, String phone , Collection<Role> roles) {
+        return new Client(id, username, firstName, lastName, email, password, city, address, phone, roles);
     }
 
 }

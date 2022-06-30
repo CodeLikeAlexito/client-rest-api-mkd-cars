@@ -13,10 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -59,7 +56,7 @@ public class ClientServiceImpl implements ClientService {
             throw new CustomResponseStatusException(HttpStatus.BAD_REQUEST, "ERR502", "Username that you entered already exists!");
         }
 
-        Client user = Client.createUserWithFullInformation(clientDto.getUsername(), clientDto.getFirstName(), clientDto.getLastName(), clientDto.getEmail(),
+        Client user = Client.createUserWithFullInformation(null, clientDto.getUsername(), clientDto.getFirstName(), clientDto.getLastName(), clientDto.getEmail(),
                 passwordEncoder.encode(clientDto.getPassword()), clientDto.getCity(), clientDto.getAddress(),
                 clientDto.getPhone(), Arrays.asList(Role.giveRole(Roles.USER.name())));
         return clientRepository.save(user);
@@ -88,6 +85,36 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Client getClientByUsername(String username) {
         return clientRepository.findByUsername(username);
+    }
+
+    @Override
+    public Map<String, Boolean> deleteUser(Long userId) {
+        Client client = clientRepository.findById(userId)
+                .orElseThrow(() -> new CustomResponseStatusException(HttpStatus.NOT_FOUND, "ERR603", "User does not exists!"));
+
+        clientRepository.delete(client);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted", Boolean.TRUE);
+        return response;
+    }
+
+    @Override
+    public Client getClientById(Long id) {
+        return clientRepository.findById(id)
+                .orElseThrow(() -> new CustomResponseStatusException(HttpStatus.NOT_FOUND, "SOME_ERR_CODE", "User does not exists!"));
+    }
+
+    @Override
+    public Client updateInvoice(Long clientId, ClientUpdateDto clientDto) {
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new CustomResponseStatusException(HttpStatus.NOT_FOUND, "ERR603", "Client does not exists!"));
+
+        final Client updatedClient = Client.updateScientist(clientId, clientDto.getUsername(), clientDto.getFirstName(), clientDto.getLastName(), clientDto.getEmail(),
+                passwordEncoder.encode(client.getPassword()), clientDto.getCity(), clientDto.getAddress(),
+                clientDto.getPhone(), clientDto.getRoles());
+        //Arrays.asList(Role.giveRole(Roles.USER.name()))
+
+        return clientRepository.save(updatedClient);
     }
 
     private boolean clientExists(String username) {
