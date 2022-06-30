@@ -105,7 +105,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Client updateInvoice(Long clientId, ClientUpdateDto clientDto) {
+    public Client updateClient(Long clientId, ClientUpdateDto clientDto) {
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new CustomResponseStatusException(HttpStatus.NOT_FOUND, "ERR603", "Client does not exists!"));
 

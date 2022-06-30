@@ -16,5 +16,5 @@ public interface ClientService extends UserDetailsService {
 
     Client getClientById(Long id);
 
-    Client updateInvoice(Long clientId, ClientUpdateDto clientDetails);
+    Client updateClient(Long clientId, ClientUpdateDto clientDetails);
 }
