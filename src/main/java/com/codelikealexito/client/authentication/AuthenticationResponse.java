@@ -1,7 +1,9 @@
 package com.codelikealexito.client.authentication;
 
+import com.codelikealexito.client.entities.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import java.util.List;
 
 import java.util.Date;
 
@@ -12,4 +14,5 @@ public class AuthenticationResponse {
     private String username;
     private String token;
     private Date expirationTime;
+    private List<Role> role;
 }

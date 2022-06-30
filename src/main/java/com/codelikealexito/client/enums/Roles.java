@@ -2,9 +2,7 @@ package com.codelikealexito.client.enums;
 
 public enum Roles {
     ADMIN("ROLE_ADMIN"),
-    USER("ROLE_USER"),
-    MODERATOR("ROLE_MODERATOR"),
-    GUEST("ROLE_GUEST");
+    USER("ROLE_USER");
 
     private final String value;
 

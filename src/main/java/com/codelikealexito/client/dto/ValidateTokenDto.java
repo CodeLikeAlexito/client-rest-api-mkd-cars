@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 public class ValidateTokenDto {
-    private ClientDto clientDto;
+    private ScientistDto scientistDto;
     private Boolean isValid;
 }

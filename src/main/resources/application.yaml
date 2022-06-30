@@ -5,7 +5,7 @@ spring:
     password: Sofia@1005
 
   application:
-    name: CLIENT-SERVICE
+    name: SCIENTIST-SERVICE
 
   jpa:
     properties:
