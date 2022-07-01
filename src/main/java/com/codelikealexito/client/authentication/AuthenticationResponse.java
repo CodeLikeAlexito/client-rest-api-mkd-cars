@@ -15,4 +15,5 @@ public class AuthenticationResponse {
     private String token;
     private Date expirationTime;
     private List<Role> role;
+    private boolean isAdmin;
 }

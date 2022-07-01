@@ -7,7 +7,6 @@ import com.codelikealexito.client.entities.Role;
 import com.codelikealexito.client.entities.Scientist;
 import com.codelikealexito.client.exceptions.CustomResponseStatusException;
 import com.codelikealexito.client.util.JwtUtil;
-import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 
 import java.util.Date;
@@ -53,7 +51,18 @@ public class AuthenticationService {
         final String jwt = jwtTokenUtil.generateToken(userDetails);
         final Date expirationTime = jwtTokenUtil.extractExpiration(jwt);
         List<Role> roles = (List<Role>) scientist.getRoles();
-        return ResponseEntity.ok(new AuthenticationResponse(scientist.getId(), scientist.getUsername(),jwt, expirationTime, roles));
+        final boolean isAdmin = checkIsUserAdmin(roles);
+        return ResponseEntity.ok(new AuthenticationResponse(scientist.getId(), scientist.getUsername(),jwt, expirationTime, roles, isAdmin));
+    }
+
+    private boolean checkIsUserAdmin(List<Role> roles) {
+        for (Role role : roles) {
+            if("ADMIN".equalsIgnoreCase(role.getName())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public ResponseEntity<ValidateTokenDto> validateJwtToken(String token) {
