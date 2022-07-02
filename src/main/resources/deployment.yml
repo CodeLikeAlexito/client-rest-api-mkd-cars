@@ -1,0 +1,57 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: scientist-api
+  labels:
+    name: scientist-api
+spec:
+  ports:
+    - nodePort: 31001
+      port: 4001
+      targetPort: 4001
+      protocol: TCP
+  selector:
+    app: scientist-api
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scientist-api
+spec:
+  selector:
+    matchLabels:
+      app: scientist-api
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: scientist-api
+    spec:
+      containers:
+        - name: scientist-api
+          image: scientist-api:v7
+          ports:
+            - containerPort: 4001
+          env:   # Setting Environmental Variables
+            - name: DB_HOST   # Setting Database host address from configMap
+              valueFrom:
+                configMapKeyRef:
+                  name: db-conf  # name of configMap
+                  key: host
+            - name: DB_NAME  # Setting Database name from configMap
+              valueFrom:
+                configMapKeyRef:
+                  name: db-conf
+                  key: name
+            - name: DB_USERNAME  # Setting Database username from Secret
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials # Secret Name
+                  key: username
+            - name: DB_PASSWORD # Setting Database password from Secret
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
