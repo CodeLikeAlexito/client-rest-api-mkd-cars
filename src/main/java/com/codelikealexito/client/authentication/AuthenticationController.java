@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/scientist")
+@RequestMapping("/v1/api/scientist")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;

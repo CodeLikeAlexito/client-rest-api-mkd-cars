@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/scientist")
+@RequestMapping("/v1/api/scientist")
 @Slf4j
 @CrossOrigin(origins = "http://localhost:3000")
 public class ScientistController {

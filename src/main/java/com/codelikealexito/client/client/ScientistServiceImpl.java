@@ -109,10 +109,8 @@ public class ScientistServiceImpl implements ScientistService {
         Scientist scientist = scientistRepository.findById(clientId)
                 .orElseThrow(() -> new CustomResponseStatusException(HttpStatus.NOT_FOUND, "ERR603", "Client does not exists!"));
 
-        final Scientist updatedScientist = Scientist.updateScientist(clientId, clientDto.getUsername(), clientDto.getFirstName(), clientDto.getLastName(), clientDto.getEmail(),
-                passwordEncoder.encode(scientist.getPassword()), clientDto.getCity(), clientDto.getAddress(),
-                clientDto.getPhone(), clientDto.getRoles());
-        //Arrays.asList(Role.giveRole(Roles.USER.name()))
+        final Scientist updatedScientist = Scientist.updateScientist(clientId, clientDto.getUsername(), clientDto.getFirstName(), clientDto.getLastName(),
+                clientDto.getEmail(), clientDto.getPassword(),  clientDto.getCity(), clientDto.getAddress(), clientDto.getPhone(), clientDto.getRoles());
 
         return scientistRepository.save(updatedScientist);
     }
