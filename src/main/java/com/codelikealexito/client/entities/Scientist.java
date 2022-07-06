@@ -28,6 +28,8 @@ public class Scientist extends DateAudit {
     private String city;
     private String address;
     private String phone;
+    @Column(name = "reset_password_token")
+    private String resetPasswordToken;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
@@ -40,7 +42,7 @@ public class Scientist extends DateAudit {
     private Collection<Role> roles;
 
     private Scientist(Long id, String username, String firstName, String lastName, String email, String password,
-                      String city, String address, String phone , Collection<Role> roles) {
+                      String city, String address, String phone, String resetPasswordToken, Collection<Role> roles) {
         this.id = id;
         this.username = username;
         this.firstName = firstName;
@@ -50,17 +52,21 @@ public class Scientist extends DateAudit {
         this.city = city;
         this.address = address;
         this.phone = phone;
+        this.resetPasswordToken = resetPasswordToken;
         this.roles = roles;
     }
 
     public static Scientist createUserWithFullInformation(Long id, String username, String firstName, String lastName, String email, String password,
-                                                          String city, String address, String phone , Collection<Role> roles) {
-        return new Scientist(null, username, firstName, lastName, email, password, city, address, phone, roles);
+                                                          String city, String address, String phone, String resetPasswordToken, Collection<Role> roles) {
+        return new Scientist(null, username, firstName, lastName, email, password, city, address, phone, null, roles);
     }
 
     public static Scientist updateScientist(Long id, String username, String firstName, String lastName, String email, String password,
-                                            String city, String address, String phone , Collection<Role> roles) {
-        return new Scientist(id, username, firstName, lastName, email, password, city, address, phone, roles);
+                                            String city, String address, String phone, String resetPasswordToken, Collection<Role> roles) {
+        return new Scientist(id, username, firstName, lastName, email, password, city, address, phone, resetPasswordToken, roles);
     }
 
+//    public static Scientist setResetPasswordToken(String token) {
+//        return new Scientist(token);
+//    }
 }

@@ -1,6 +1,7 @@
 package com.codelikealexito.client.client;
 
 import com.codelikealexito.client.entities.Scientist;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +16,10 @@ import java.util.Map;
 @RequestMapping("/v1/api/scientist")
 @Slf4j
 @CrossOrigin(origins = "http://localhost:3000")
+@AllArgsConstructor
 public class ScientistController {
 
-    @Autowired
-    private ScientistService scientistService;
+    private final ScientistService scientistService;
 
     @PostMapping("/")
     public ResponseEntity<Scientist> registerClient(@RequestBody ScientistRegistrationDto clientDto) {

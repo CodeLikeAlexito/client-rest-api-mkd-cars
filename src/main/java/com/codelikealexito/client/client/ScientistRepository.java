@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface ScientistRepository extends JpaRepository<Scientist, Long> {
     Scientist findByUsername(String username);
     Scientist findByEmail(String email);
+    Scientist findByResetPasswordToken(String token);
 }
