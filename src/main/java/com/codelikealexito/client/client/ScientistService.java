@@ -18,7 +18,8 @@ public interface ScientistService extends UserDetailsService {
     Scientist getClientById(Long id);
 
     Scientist updateClient(Long clientId, ScientistUpdateDto clientDetails);
-    void updateResetPasswordToken(String token, String email);
-    Scientist getScientistByResetPasswordToken(String token);
-    void resetPassword(String token, PasswordResetDto passwordResetDto);
+//    void updateResetPasswordToken(String token, String email);
+//    Scientist getScientistByResetPasswordToken(String token);
+    Map<String, Boolean> resetPassword(String token, PasswordResetDto passwordResetDto);
+    Map<String, Boolean> forgetPassword(String email);
 }

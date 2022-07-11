@@ -9,6 +9,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.*;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -21,37 +23,27 @@ public class ForgotPasswordController {
 //    private final JavaMailSender javaMailSender;
 
     @PostMapping("/forgot_password")
-    public ResponseEntity<Void> processForgotPassword() {
-        String token = String.valueOf(UUID.randomUUID());
-        try {
-            scientistService.updateResetPasswordToken((token), "sashe@gmail.com"); //this can return boolean
-            // if reset token is successfully writen, send email
-            String resetPasswordLink = "http://localhost:4001/v1/api/scientist/password/reset_password?token=" + token;
-            scientistService.sendEmail("ivanovalexkav@gmail.com",
-                        "Test subject",
-                    resetPasswordLink
-                    );
-//            SimpleMailMessage message = new SimpleMailMessage();
-//            message.setFrom("test@gmail.com");
-//            message.setTo("ivanovalexkav@gmail.com");
-//            message.setSubject("Test");
-//            message.setText(resetPasswordLink);
-////            emailSender.send(message);
-//            emailSender.send(message);
-        } catch (CustomResponseStatusException e) {
-            System.out.println(e.getMessage());
-        }
+    public ResponseEntity<Map<String, Boolean>> processForgotPassword(@RequestParam(value = "email") String email) {
+//        Map<String, Boolean> resultMap = new HashMap<>();
+        Map<String, Boolean> resultMap = scientistService.forgetPassword(email);
+//        try {
+//
+//            // if reset token is successfully writen, send email
+//            resultMap = scientistService.forgetPassword(email);
+//
+//        } catch (CustomResponseStatusException e) {
+//            System.out.println(e.getMessage());
+//        }
 
-        System.out.println(UUID.randomUUID());
-//        System.out.println("http://localhost:4001/v1/api/scientist/password/reset_password?token=");
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(resultMap);
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<Void> resetPassword(@RequestParam (value = "token") String token,
+    public ResponseEntity<Map<String, Boolean>> resetPassword(@RequestParam (value = "token") String token,
                                               @RequestBody PasswordResetDto passwordResetDto) {
-        scientistService.resetPassword(token, passwordResetDto);
 
-        return ResponseEntity.ok().build();
+        Map<String, Boolean> resultMap = scientistService.resetPassword(token, passwordResetDto);
+
+        return ResponseEntity.ok(resultMap);
     }
 }

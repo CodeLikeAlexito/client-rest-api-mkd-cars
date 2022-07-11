@@ -23,8 +23,8 @@ spring:
             enable: 'true'
           auth: 'true'
     host: smtp.gmail.com
-    username: aleksandar.ivanov@estafet.com
-    password: ouqubkpdipwlakpn
+    username: ivanovalexkav@gmail.com
+    password: ujbrbzlbsqdovxom
     port: '587'
 
 server:

@@ -6,6 +6,7 @@ import com.codelikealexito.client.entities.Role;
 import com.codelikealexito.client.enums.Roles;
 import com.codelikealexito.client.exceptions.CustomResponseStatusException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -17,12 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 //import java.util.*;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Arrays;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -31,13 +27,13 @@ public class ScientistServiceImpl implements ScientistService {
     private final ScientistRepository scientistRepository;
     private final PasswordEncoder passwordEncoder;
     private final RestTemplate restTemplate;
-    private final JavaMailSender javaMailSender;
+    private final EmailSenderService emailSenderService;
 
-    public ScientistServiceImpl(ScientistRepository scientistRepository, PasswordEncoder passwordEncoder, RestTemplate restTemplate, JavaMailSender javaMailSender) {
+    public ScientistServiceImpl(ScientistRepository scientistRepository, PasswordEncoder passwordEncoder, RestTemplate restTemplate, EmailSenderService emailSenderService) {
         this.scientistRepository = scientistRepository;
         this.passwordEncoder = passwordEncoder;
         this.restTemplate = restTemplate;
-        this.javaMailSender = javaMailSender;
+        this.emailSenderService = emailSenderService;
     }
 
     @Override
@@ -126,62 +122,104 @@ public class ScientistServiceImpl implements ScientistService {
         return scientistRepository.save(updatedScientist);
     }
 
+//    @Override
+//    public void updateResetPasswordToken(String token, String email) {
+//        Scientist scientist = scientistRepository.findByEmail(email);
+//        if (scientist != null) {
+//            final Scientist updateScientist = Scientist.updateScientist(scientist.getId(), scientist.getUsername(), scientist.getFirstName(), scientist.getLastName(),
+//                    scientist.getEmail(), scientist.getPassword(), scientist.getCity(), scientist.getAddress(), scientist.getPhone(), token, scientist.getRoles());
+//            scientistRepository.save(updateScientist);
+//        } else {
+//            throw new CustomResponseStatusException(HttpStatus.NOT_FOUND, "ERR_CODE", "Could not find any customer with the email " + email);
+//        }
+//    }
+
+//    private void sendEmail(String toEmail,
+//                          String subject,
+//                          String body) {
+//        SimpleMailMessage message = new SimpleMailMessage();
+//        message.setFrom("aleksandar.ivanov@estafet.com");
+//        message.setTo(toEmail);
+//        message.setText(body);
+//        message.setSubject(subject);
+//
+//        javaMailSender.send(message);
+//
+//        System.out.println("Mail send successfully...");
+//    }
+
+//    @Override
+//    public Scientist getScientistByResetPasswordToken(String token) {
+//        return scientistRepository.findByResetPasswordToken(token);
+//    }
+
     @Override
-    public void updateResetPasswordToken(String token, String email) {
-        Scientist scientist = scientistRepository.findByEmail(email);
-        if (scientist != null) {
-            final Scientist updateScientist = Scientist.updateScientist(scientist.getId(), scientist.getUsername(), scientist.getFirstName(), scientist.getLastName(),
-                    scientist.getEmail(), scientist.getPassword(), scientist.getCity(), scientist.getAddress(), scientist.getPhone(), token, scientist.getRoles());
-            scientistRepository.save(updateScientist);
-        } else {
-            throw new CustomResponseStatusException(HttpStatus.NOT_FOUND, "ERR_CODE", "Could not find any customer with the email " + email);
-        }
-    }
-
-    private void sendEmail(String toEmail,
-                          String subject,
-                          String body) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("aleksandar.ivanov@estafet.com");
-        message.setTo(toEmail);
-        message.setText(body);
-        message.setSubject(subject);
-
-        javaMailSender.send(message);
-
-        System.out.println("Mail send successfully...");
-    }
-
-    @Override
-    public Scientist getScientistByResetPasswordToken(String token) {
-        return scientistRepository.findByResetPasswordToken(token);
-    }
-
-    @Override
-    public void resetPassword(String token, PasswordResetDto passwordResetDto) {
-        Scientist scientist = getScientistByResetPasswordToken(token);
+    public Map<String, Boolean> resetPassword(String token, PasswordResetDto passwordResetDto) {
+        //1 This method is called after email URL is clicked
+        //2 Search by reset password token
+        Scientist scientist = scientistRepository.findByResetPasswordToken(token);
 
         if(scientist == null) {
-            return;
+            throw new CustomResponseStatusException(HttpStatus.NOT_FOUND, "ERR_CODE", "Could not find any customer with that reset password token " + token);
         }
 
+        //3,4,5,6 update new password and reset password reset token to null
         updatePassword(scientist, passwordResetDto);
 
+        Map<String, Boolean> resultMap = new HashMap<>();
+        resultMap.put("Password successfully generated: ", Boolean.TRUE);
+
+        return resultMap;
+
+    }
+
+    @Override
+    public Map<String, Boolean> forgetPassword(String email) {
+
+        if(StringUtils.isEmpty(email) || email == null) {
+            throw new CustomResponseStatusException(HttpStatus.NOT_FOUND, "ERR_CODE", "Email cannot be null or empty");
+        }
+
+        //1 search by email
+        Scientist scientist = scientistRepository.findByEmail(email);
+
+        if (scientist == null) {
+            throw new CustomResponseStatusException(HttpStatus.NOT_FOUND, "ERR_CODE", "Could not find any customer with the email " + email);
+        }
+
+        //2 generate reset password token
+        String token = String.valueOf(UUID.randomUUID());
+
+        //3 update scientist, insert reset password token
+        final Scientist updateScientist = Scientist.updateScientist(scientist.getId(), scientist.getUsername(), scientist.getFirstName(), scientist.getLastName(),
+                scientist.getEmail(), scientist.getPassword(), scientist.getCity(), scientist.getAddress(), scientist.getPhone(), token, scientist.getRoles());
+        scientistRepository.save(updateScientist);
+
+        //4 compose email body
+        String resetPasswordLink = "http://localhost:3000/forget-password?token=" + token;
+
+        //5 send email for reset with reset password token
+        emailSenderService.sendEmail(email,
+                "Test subject",
+                resetPasswordLink
+        );
+
+        //6 return response
+        Map<String, Boolean> resultMap = new HashMap<>();
+        resultMap.put("Reset password link generated: ", Boolean.TRUE);
+
+        return  resultMap;
     }
 
     private void updatePassword(Scientist scientist, PasswordResetDto passwordResetDto) {
-//        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         if(!passwordResetDto.getNewPassword().equals(passwordResetDto.getConfirmNewPassword())) {
-            // throw exception
-            return;
+            throw new CustomResponseStatusException(HttpStatus.NOT_FOUND, "ERR_CODE", "New password and confirmed password are not equal!");
         }
 
         String encodedPassword = passwordEncoder.encode(passwordResetDto.getNewPassword());
-//        customer.setPassword(encodedPassword);
         final Scientist updateScientist = Scientist.updateScientist(scientist.getId(), scientist.getUsername(), scientist.getFirstName(), scientist.getLastName(),
                 scientist.getEmail(), encodedPassword, scientist.getCity(), scientist.getAddress(), scientist.getPhone(), null, scientist.getRoles());
 
-//        customer.setResetPasswordToken(null);
         scientistRepository.save(updateScientist);
     }
 
