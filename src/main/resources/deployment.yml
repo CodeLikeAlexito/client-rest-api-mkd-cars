@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
         - name: scientist-api
-          image: scientist-api:v8
+          image: scientist-api:v10
           ports:
             - containerPort: 4001
           env:   # Setting Environmental Variables
