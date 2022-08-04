@@ -1,17 +1,13 @@
-package com.codelikealexito.client.client;
+package com.codelikealexito.client.email;
 
+import com.codelikealexito.client.client.ScientistService;
 import com.codelikealexito.client.dto.PasswordResetDto;
-import com.codelikealexito.client.exceptions.CustomResponseStatusException;
+import com.codelikealexito.client.email.EmailSenderService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.*;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
+
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/api/scientist/password")

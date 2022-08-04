@@ -1,4 +1,4 @@
-package com.codelikealexito.client.client;
+package com.codelikealexito.client.email;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

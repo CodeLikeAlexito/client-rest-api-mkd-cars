@@ -1,6 +1,7 @@
 package com.codelikealexito.client.client;
 
 import com.codelikealexito.client.dto.PasswordResetDto;
+import com.codelikealexito.client.email.EmailSenderService;
 import com.codelikealexito.client.entities.Scientist;
 import com.codelikealexito.client.entities.Role;
 import com.codelikealexito.client.enums.Roles;
@@ -8,8 +9,6 @@ import com.codelikealexito.client.exceptions.CustomResponseStatusException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
