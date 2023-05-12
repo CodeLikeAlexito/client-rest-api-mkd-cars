@@ -5,12 +5,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface ScientistService extends UserDetailsService {
     Scientist register(ScientistRegistrationDto userDto);
-    Scientist editClient(ScientistRegistrationDto userDto);
     List<Scientist> getAllClients();
-    Scientist getClientByUsername(String username);
+    Optional<Scientist> getClientByUsername(String username);
 
     Map<String, Boolean> deleteUser(Long userId);
 

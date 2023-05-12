@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -47,22 +48,17 @@ public class AuthenticationService {
         }
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
-        final Scientist scientist = scientistService.getClientByUsername(userDetails.getUsername());
+        final Optional<Scientist> scientist = scientistService.getClientByUsername(userDetails.getUsername());
         final String jwt = jwtTokenUtil.generateToken(userDetails);
         final Date expirationTime = jwtTokenUtil.extractExpiration(jwt);
-        List<Role> roles = (List<Role>) scientist.getRoles();
+        List<Role> roles = (List<Role>) scientist.get().getRoles();
         final boolean isAdmin = checkIsUserAdmin(roles);
-        return ResponseEntity.ok(new AuthenticationResponse(scientist.getId(), scientist.getUsername(),jwt, expirationTime, roles, isAdmin));
+        return ResponseEntity.ok(new AuthenticationResponse(scientist.get().getId(), scientist.get().getUsername(),jwt, expirationTime, roles, isAdmin));
     }
 
     private boolean checkIsUserAdmin(List<Role> roles) {
-        for (Role role : roles) {
-            if("ADMIN".equalsIgnoreCase(role.getName())) {
-                return true;
-            }
-        }
-
-        return false;
+        return roles.stream()
+                .anyMatch(role -> "ADMIN".equalsIgnoreCase(role.getName()));
     }
 
     public ResponseEntity<ValidateTokenDto> validateJwtToken(String token) {
@@ -73,11 +69,11 @@ public class AuthenticationService {
         if (userDetails.getUsername() == null || userDetails.getUsername().isEmpty()) {
             throw new CustomResponseStatusException(HttpStatus.NOT_FOUND, "ERR_CODE", "User not found");
         }
-        final Scientist scientist = scientistService.getClientByUsername(userDetails.getUsername());
+        final Optional<Scientist> scientist = scientistService.getClientByUsername(userDetails.getUsername());
         boolean isValid = jwtTokenUtil.validateToken(extractedToken, userDetails);
         ScientistDto scientistDto = new ScientistDto();
-        scientistDto.setId(scientist.getId());
-        scientistDto.setUsername(scientist.getUsername());
+        scientistDto.setId(scientist.get().getId());
+        scientistDto.setUsername(scientist.get().getUsername());
         scientistDto.setToken(token);
 
         ValidateTokenDto validateTokenDto = new ValidateTokenDto();

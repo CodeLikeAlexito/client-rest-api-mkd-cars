@@ -31,18 +31,14 @@ public class ScientistServiceImpl implements ScientistService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Scientist scientist = scientistRepository.findByUsername(username);
-        if (scientist == null) {
-            log.error("User not found in the database.");
-            throw new UsernameNotFoundException(username);
-        }
+        Optional<Scientist> scientist = Optional.ofNullable(scientistRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("test")));
+
         log.info("User found in the database: {}", username);
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        scientist.getRoles().forEach(role ->
-        {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
-        });
-        return new org.springframework.security.core.userdetails.User(scientist.getUsername(), scientist.getPassword(), authorities);
+        scientist.ifPresent(value -> value.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName()))));
+
+        return new org.springframework.security.core.userdetails.User(scientist.get().getUsername(), scientist.get().getPassword(), authorities);
     }
 
     @Override
@@ -62,28 +58,13 @@ public class ScientistServiceImpl implements ScientistService {
         return scientistRepository.save(user);
     }
 
-    //TODO to be implemented
-    @Override
-    public Scientist editClient(ScientistRegistrationDto userDto) {
-        if(!clientExists(userDto.getUsername())){
-
-        }
-
-        if(!emailExists(userDto.getEmail())) {
-
-        }
-
-        return null;
-
-    }
-
     @Override
     public List<Scientist> getAllClients() {
         return scientistRepository.findAll();
     }
 
     @Override
-    public Scientist getClientByUsername(String username) {
+    public Optional<Scientist> getClientByUsername(String username) {
         return scientistRepository.findByUsername(username);
     }
 
@@ -110,13 +91,13 @@ public class ScientistServiceImpl implements ScientistService {
                 .orElseThrow(() -> new CustomResponseStatusException(HttpStatus.NOT_FOUND, "ERR603", "Client does not exists!"));
 
         final Scientist updatedScientist = Scientist.updateScientist(clientId, clientDto.getUsername(), clientDto.getFirstName(), clientDto.getLastName(),
-                clientDto.getEmail(), clientDto.getPassword(),  clientDto.getCity(), clientDto.getAddress(), clientDto.getPhone(), clientDto.getRoles());
+                clientDto.getEmail(),  clientDto.getCity(), clientDto.getAddress(), clientDto.getPhone(), clientDto.getRoles());
 
         return scientistRepository.save(updatedScientist);
     }
 
     private boolean clientExists(String username) {
-        return scientistRepository.findByUsername(username) != null;
+        return scientistRepository.findByUsername(username).isPresent();
     }
 
     private boolean emailExists(String email) {

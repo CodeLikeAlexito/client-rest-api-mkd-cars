@@ -53,14 +53,27 @@ public class Scientist extends DateAudit {
         this.roles = roles;
     }
 
+    private Scientist(Long id, String username, String firstName, String lastName, String email,
+                      String city, String address, String phone , Collection<Role> roles) {
+        this.id = id;
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.city = city;
+        this.address = address;
+        this.phone = phone;
+        this.roles = roles;
+    }
+
     public static Scientist createUserWithFullInformation(Long id, String username, String firstName, String lastName, String email, String password,
                                                           String city, String address, String phone , Collection<Role> roles) {
         return new Scientist(null, username, firstName, lastName, email, password, city, address, phone, roles);
     }
 
-    public static Scientist updateScientist(Long id, String username, String firstName, String lastName, String email, String password,
+    public static Scientist updateScientist(Long id, String username, String firstName, String lastName, String email,
                                             String city, String address, String phone , Collection<Role> roles) {
-        return new Scientist(id, username, firstName, lastName, email, password, city, address, phone, roles);
+        return new Scientist(id, username, firstName, lastName, email, city, address, phone, roles);
     }
 
 }
